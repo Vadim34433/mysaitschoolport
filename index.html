@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Школьный Портал</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <header class="header">
+    <h1>Школьный Портал</h1>
+    <p>Добро пожаловать!</p>
+  </header>
+
+  <nav class="navbar">
+    <div class="container">
+      <ul>
+        <li><a href="#" onclick="showSection('main')">Главная</a></li>
+        <li><a href="#" onclick="showSection('sto')">Столовая</a></li>
+        <li><a href="#" onclick="showSection('news')">Новости</a></li>
+        <li><a href="#" onclick="showSection('class')">Новости класса</a></li>
+        <li><a href="#" onclick="showSection('toilet')">Новости туалета</a></li>
+        <li><a href="#" onclick="showSection('teachers')">Новости учителей</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container main-content" id="mainContent">
+
+    <!-- Главная страница -->
+    <section id="main" class="news-section">
+      <h2>Добро пожаловать на Школьный Портал!</h2>
+      <p>Здесь вы найдете актуальную информацию о жизни нашей школы.</p>
+      <p>Выберите раздел в меню для просмотра.</p>
+    </section>
+
+    <!-- Секция Столовой -->
+    <section id="sto" class="news-section" style="display:none;">
+      <h2>Меню Столовой</h2>
+      <p>Сегодня в меню:</p>
+      <ul>
+        <li>С</li>
+        <li>В</li>
+        <li>э</li>
+      </ul>
+      <p>Приятного аппетита!</p>
+    </section>
+
+    <!-- Секция новостей -->
+    <section id="news" class="news-section" style="display:none;">
+        <h2>Общие Новости</h2>
+        <div class="news-item">
+             <img src="https://priroda.club/uploads/posts/2023-09/1695060993_priroda-club-p-poima-reki-volga-oboi-4.jpg" alt="Река Ока">
+            <h3>Важное объявление</h3>
+            <p>Сос.</p>
+        </div>
+        <div class="news-item">
+            <img src="" alt="Новости школы">
+            <h3>Спортивные соревнования</h3>
+            <p>К</p>
+        </div>
+    </section>
+
+    <!-- Секция новостей класса (пример) -->
+    <section id="class" class="news-section" style="display:none;">
+      <h2>Новости Вашего Класса</h2>
+      <p>Здесь будут новости вашего класса.  Доступно только для авторизованных пользователей.</p>
+    </section>
+
+    <!-- Секция новостей туалета (шутка!) -->
+    <section id="toilet" class="news-section" style="display:none;">
+      <h2>Новости Туалета</h2>
+      <p>К сожалению, новостей про туалет нет.</p>
+    </section>
+
+    <!-- Секция новостей учителей -->
+    <section id="teachers" class="news-section" style="display:none;">
+      <h2>Новости Учителей</h2>
+      <p>Актуальные события из жизни учителей.  Доступно только для авторизованных пользователей.</p>
+    </section>
+
+    <!-- Секция логина -->
+    <section id="loginSection" class="login-section">
+        <h2>Авторизация</h2>
+        <form class="login-form" id="loginForm" onsubmit="login(event)">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Войти</button>
+        </form>
+        <p id="loginError" style="color: red; display: none;">Неверное имя пользователя или пароль.</p>
+    </section>
+
+     <!-- Кнопка "Выйти" -->
+     <button id="logoutButton" onclick="logout()">Выйти</button>
+
+  </main>
+
+  <footer class="footer">
+    &copy; 2024 Школьный Портал
+  </footer>
+
+  <!-- Модальное окно для информации о профиле (не реализовано полностью) -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Информация о профиле</h2>
+      <p>Здесь будет информация о профиле пользователя.</p>
+      <p id="profileUsername"></p>
+    </div>
+  </div>
+
+  <script>
+    // Локальное хранилище для аккаунта
+    let loggedInUser = null; // null если не авторизован
+
+    // Список учетных записей (в реальном проекте это должно храниться на сервере)
+    const accounts = [
+      { username: 'student1', password: 'password1', role: 'student' },
+      { username: 'teacher1', password: 'teacherpass', role: 'teacher' },
+      // Добавьте больше аккаунтов здесь
+    ];
+
+    function showSection(sectionId) {
+      // Скрываем все секции
+      const sections = document.querySelectorAll('.news-section');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Показываем выбранную секцию
+      const selectedSection = document.getElementById(sectionId);
+      if (selectedSection) {
+        selectedSection.style.display = 'block';
+      }
+    }
+
+    function login(event) {
+        event.preventDefault(); // Предотвращаем перезагрузку страницы
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const loginError = document.getElementById('loginError');
+
+        // Проверка учетных записей
+        const account = accounts.find(acc => acc.username === username && acc.password === password);
+
+        if (account) {
+            loggedInUser = { username: username, role: account.role };  // Создаем объект пользователя
+            loginError.style.display = 'none';
+
+            // Отображаем разделы в зависимости от роли пользователя и скрываем секцию логина.
+            showSection('main'); // Показываем главную после успешного входа.
+            document.getElementById('loginSection').style.display = 'none'; // Скрываем секцию логина
+
+            // Отображаем разделы, доступные для авторизованных пользователей (например, "новости класса" и "новости учителей") в зависимости от роли:
+            if (loggedInUser.role === 'student') {
+              showSection('class'); // Для студентов - новости класса
+            } else if (loggedInUser.role === 'teacher') {
+              showSection('teachers'); // Для учителей - новости учителей
+            }
+
+            // Показываем кнопку "Выйти"
+            document.getElementById('logoutButton').style.display = 'block';
+
+            // Также можно показывать информацию о профиле в модальном окне:
+            openModal();
+            document.getElementById("profileUsername").innerText = "Имя пользователя: " + username + " (Роль: " + loggedInUser.role + ")"; // Показываем имя пользователя в модальном окне.
+        } else {
+            loginError.style.display = 'block';
+        }
+    }
+
+    function logout() {
+      loggedInUser = null;
+      // Скрываем разделы, доступные только для авторизованных пользователей.
+      showSection('main'); // Возвращаемся на главную
+      document.getElementById('loginSection').style.display = 'block'; // Показываем секцию логина
+      document.getElementById('logoutButton').style.display = 'none'; // Скрываем кнопку выхода
+      // Скрываем все новостные разделы (новости класса, учителей)
+      const sections = document.querySelectorAll('.news-section');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+      // Изначально показываем главную
+      showSection('main');
+
+    }
+
+    // Обработчики модального окна
+    function openModal() {
+        document.getElementById('profileModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('profileModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('profileModal')) {
+            closeModal();
+        }
+    }
+
+    // Изначально показываем главную страницу и секцию логина
+    showSection('main');
+    showSection('loginSection');
+
+  </script>
+
+</body>
+</html>
